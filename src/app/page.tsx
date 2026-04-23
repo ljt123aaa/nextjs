@@ -1,91 +1,54 @@
-'use client';
+import Link from 'next/link';
+import { getSortedPostsData } from '@/lib/posts';
 
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect } from "react";
+export default async function Home() {
+  const allPostsData = await getSortedPostsData();
 
-// 示例：调用成功场景
-async function callApi() {
-  try {
-    const response = await fetch('/api/test', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({}),
-    });
-    if (response.ok) {
-      const data = await response.json();
-      console.log('成功:', data);
-    } else {
-      const errorData = await response.json();
-      console.error('错误:', errorData);
-    }
-  } catch (error) {
-    console.error('请求失败:', error);
-  }
-}
-
-export default function Home() {
-  // 使用 useEffect 在客户端渲染时调用 API
-  useEffect(() => {
-    callApi();
-  }, []);
-  
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <Image
-            src="/next.svg"
-            alt="Next.js 标志"
-            width={120}
-            height={24}
-            className="mx-auto dark:invert"
-          />
-          <h1 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
-            Next.js 15 空白项目
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        <header className="mb-12 text-center">
+          <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 tracking-tight sm:text-5xl mb-4 py-2">
+            我的全栈博客
           </h1>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            基于 Next.js 15 + TypeScript + Tailwind CSS 的现代化前端项目
+          <p className="text-xl text-gray-500">
+            使用 Next.js App Router 和 Supabase 强力驱动 🚀
           </p>
-        </div>
-
-        <div className="space-y-4">
-          {/* <a
-            href="https://nextjs.org/docs/app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
-          >
-            Next.js 文档
-          </a> */}
-          <Link
-            href="/features"
-            className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
-          >
-            Next.js 功能展示
-          </Link>
-          <Link
-            href="/blog"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 mt-4"
-          >
-            访问我的博客 🚀
-          </Link>
-          {/* <a
-            href="https://tailwindcss.com/docs"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
-          >
-            Tailwind CSS 文档
-          </a> */}
-        </div>
-
-        <div className="text-center text-xs text-gray-500 dark:text-gray-400">
-          <p>项目已配置：ESLint + Prettier + TypeScript</p>
-          <p className="mt-1">使用 App Router 架构</p>
-        </div>
+        </header>
+        
+        <main className="space-y-6">
+          {allPostsData.length === 0 ? (
+            <div className="text-center p-12 bg-white rounded-xl shadow-sm border border-gray-100">
+              <p className="text-gray-500 text-lg">暂无文章。</p>
+              <Link href="/admin/editor/new" className="text-blue-600 hover:underline mt-2 inline-block">
+                点击这里发布您的第一篇文章 &rarr;
+              </Link>
+            </div>
+          ) : (
+            allPostsData.map(({ id, date, title, description }) => (
+              <article key={id} className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
+                <Link href={`/${id}`} className="block group">
+                  <h2 className="text-2xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors mb-2">
+                    {title}
+                  </h2>
+                </Link>
+                <div className="flex items-center text-sm text-gray-500 mb-4">
+                  <time dateTime={date}>{date}</time>
+                </div>
+                {description && (
+                  <p className="text-gray-600 leading-relaxed">
+                    {description}
+                  </p>
+                )}
+                <div className="mt-4">
+                  <Link href={`/${id}`} className="text-blue-600 font-medium hover:underline inline-flex items-center">
+                    阅读全文 <span className="ml-1">&rarr;</span>
+                  </Link>
+                </div>
+              </article>
+            ))
+          )}
+        </main>
       </div>
     </div>
   );

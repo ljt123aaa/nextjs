@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 // 生成静态路由参数
-export function generateStaticParams() {
-  const posts = getSortedPostsData();
+export async function generateStaticParams() {
+  const posts = await getSortedPostsData();
   return posts.map((post) => ({
     slug: post.id,
   }));
@@ -25,8 +25,8 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-100">
         <div className="mb-8">
-          <Link href="/blog" className="text-blue-500 hover:underline">
-            &larr; 返回博客列表
+          <Link href="/" className="text-blue-500 hover:underline">
+            &larr; 返回首页
           </Link>
         </div>
         
@@ -39,7 +39,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
           {/* 使用 Tailwind Typography 插件的 prose 类进行排版 */}
           <div 
             className="prose prose-blue max-w-none prose-img:rounded-xl prose-a:text-blue-600"
-            dangerouslySetInnerHTML={{ __html: postData.contentHtml }} 
+            dangerouslySetInnerHTML={{ __html: postData.contentHtml ?? '' }}
           />
         </article>
       </div>
