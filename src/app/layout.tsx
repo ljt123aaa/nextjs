@@ -43,7 +43,7 @@ export default async function RootLayout({
                   href="/admin"
                   className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors"
                 >
-                  后台管理
+                  管理员登录
                 </Link>
                 {user && (
                   <div className="flex items-center space-x-4 ml-4 pl-4 border-l border-gray-200">
